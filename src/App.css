@@ -1,5 +1,11 @@
 .App {
   text-align: center;
+  --primary-color: #242582;
+  --secondary-color: #2F2FA2;
+  --primary-accent: #F64C72;
+  --gradient-accent: coral;
+  --secondary-accent: #99738E;
+  --text-color: white;
 }
 
 .App-logo {
