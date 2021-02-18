@@ -21,7 +21,7 @@ export default class App extends React.Component {
           <header className="App-header">
           </header>
           <div className="break" />
-          <div className="body">
+          <div className="main">
             {/*{this.state.authenticated ? this.state.linked ? (<Home />) : (<DeviceLink />) : (<SignUp />)}*/}
             <Home user={"Matt"}/>
           </div>

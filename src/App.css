@@ -10,8 +10,17 @@
   background: linear-gradient(90deg, rgba(246,76,114,1) 48%, rgba(255,127,80,1) 94%);
 }
 
+body {
+  background: rgb(246,76,114);
+  background: linear-gradient(90deg, rgba(246,76,114,1) 48%, rgba(255,127,80,1) 94%);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+}
+
 .App-header {
-  min-height: 10vh;
+  height: 10vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -22,7 +31,7 @@
   color: var(--text-color);
 }
 
-.body {
+.main {
   padding-left: 5vh;
   min-height: 45vh;
   display: flex;
