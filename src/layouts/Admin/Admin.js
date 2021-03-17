@@ -187,15 +187,11 @@ function Admin(props) {
                               toggleSidebar={toggleSidebar}
                           />
                           <div className="main-panel" ref={mainPanelRef} data={"blue"}>
-                            {user.linkedDevice ?
-                                (<AdminNavbar
+                            <AdminNavbar
                                     brandText={getBrandText(location.pathname)}
                                     toggleSidebar={toggleSidebar}
                                     sidebarOpened={sidebarOpened}
-                                />)
-                                :
-                                (<RegisterNavbar />)
-                            }
+                                />
                             <Switch>
                               {getRoutes(routes)}
                               <Redirect from="*" to={user.linkedDevice ? "/dashboard" : "/register-device"} />
