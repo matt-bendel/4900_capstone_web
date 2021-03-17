@@ -49,7 +49,7 @@ function RegisterNavbar() {
         <Navbar className={classNames("navbar-absolute", color)} expand="lg">
             <Container fluid>
                 <div className="navbar-wrapper">
-                    <NavbarBrand href="#pablo" onClick={(e) => e.preventDefault()}>
+                    <NavbarBrand href="#pablo" onClick={(e) => e.preventDefault()} style={{marginTop: "20px"}}>
                         ECE 4900 Capstone
                     </NavbarBrand>
                 </div>
