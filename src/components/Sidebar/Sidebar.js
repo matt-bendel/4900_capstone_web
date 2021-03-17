@@ -26,6 +26,7 @@ import PerfectScrollbar from "perfect-scrollbar";
 
 // reactstrap components
 import { Nav, NavLink as ReactstrapNavLink } from "reactstrap";
+import {UserContext} from "../../contexts/UserContext";
 
 var ps;
 
@@ -113,27 +114,54 @@ function Sidebar(props) {
             </div>
           ) : null}
           <Nav>
-            {routes.map((prop, key) => {
-              if (prop.redirect) return null;
-              return (
-                <li
-                  className={
-                    activeRoute(prop.path) + (prop.pro ? " active-pro" : "")
-                  }
-                  key={key}
-                >
-                  <NavLink
-                    to={prop.path}
-                    className="nav-link"
-                    activeClassName="active"
-                    onClick={props.toggleSidebar}
-                  >
-                    <i className={prop.icon} />
-                    <p>{rtlActive ? prop.rtlName : prop.name}</p>
-                  </NavLink>
-                </li>
-              );
-            })}
+            <UserContext.Consumer>
+              {({user}) =>
+                {
+                  return routes.map((prop, key) => {
+                    if (prop.redirect) return null;
+                    if (user.linkedDevice && prop.layout === "/admin") {
+                      return (
+                          <li
+                              className={
+                                activeRoute(prop.path) + (prop.pro ? " active-pro" : "")
+                              }
+                              key={key}
+                          >
+                            <NavLink
+                                to={prop.path}
+                                className="nav-link"
+                                activeClassName="active"
+                                onClick={props.toggleSidebar}
+                            >
+                              <i className={prop.icon} />
+                              <p>{rtlActive ? prop.rtlName : prop.name}</p>
+                            </NavLink>
+                          </li>
+                      );
+                    } else if (!user.linkedDevice && (prop.path === '/user-profile' || prop.path === '/register-device')) {
+                      return (
+                          <li
+                              className={
+                                activeRoute(prop.path) + (prop.pro ? " active-pro" : "")
+                              }
+                              key={key}
+                          >
+                            <NavLink
+                                to={prop.path}
+                                className="nav-link"
+                                activeClassName="active"
+                                onClick={props.toggleSidebar}
+                            >
+                              <i className={prop.icon} />
+                              <p>{rtlActive ? prop.rtlName : prop.name}</p>
+                            </NavLink>
+                          </li>
+                      );
+                    }
+                  })
+                }
+              }
+            </UserContext.Consumer>
           </Nav>
           <div className="logo">
           </div>

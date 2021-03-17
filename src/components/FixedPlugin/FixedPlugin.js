@@ -20,6 +20,7 @@ import React from "react";
 // reactstrap components
 import { Button, Dropdown, DropdownToggle, Badge } from "reactstrap";
 import { ThemeContext, themes } from "contexts/ThemeContext";
+import {UserContext} from "../../contexts/UserContext";
 
 function FixedPlugin(props) {
   const [dropDownIsOpen, setdropDownIsOpen] = React.useState(false);
@@ -35,22 +36,36 @@ function FixedPlugin(props) {
         <ul className="dropdown-menu show">
           <li className="header-title">THEME</li>
           <li className="adjustments-line text-center color-change">
-            <ThemeContext.Consumer>
-              {({ changeTheme }) => (
-                <>
-                  <span className="color-label">LIGHT MODE</span>{" "}
-                  <Badge
-                    className="light-badge mr-2"
-                    onClick={() => changeTheme(themes.light)}
-                  />{" "}
-                  <Badge
-                    className="dark-badge ml-2"
-                    onClick={() => changeTheme(themes.dark)}
-                  />{" "}
-                  <span className="color-label">DARK MODE</span>{" "}
-                </>
+            <UserContext.Consumer>
+              {({user, updateUser}) => (
+                <ThemeContext.Consumer>
+                  {({ changeTheme }) => (
+                      <>
+                        <span className="color-label">LIGHT MODE</span>{" "}
+                        <Badge
+                            className="light-badge mr-2"
+                            onClick={() => {
+                              changeTheme(themes.light);
+                              let temp = user;
+                              temp.theme = themes.light;
+                              updateUser(temp, true);
+                            }}
+                        />{" "}
+                        <Badge
+                            className="dark-badge ml-2"
+                            onClick={() => {
+                              changeTheme(themes.dark);
+                              let temp = user;
+                              temp.theme = themes.dark;
+                              updateUser(temp, true);
+                            }}
+                        />{" "}
+                        <span className="color-label">DARK MODE</span>{" "}
+                      </>
+                  )}
+                </ThemeContext.Consumer>
               )}
-            </ThemeContext.Consumer>
+            </UserContext.Consumer>
           </li>
         </ul>
       </Dropdown>

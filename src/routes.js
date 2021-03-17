@@ -21,6 +21,13 @@ import UserProfile from "views/UserProfile.js";
 
 var routes = [
   {
+    path: "/register-device",
+    name: "Register Device",
+    icon: "tim-icons icon-mobile",
+    component: null,
+    layout: "/registration",
+  },
+  {
     path: "/dashboard",
     name: "Dashboard",
     rtlName: "لوحة القيادة",

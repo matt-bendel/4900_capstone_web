@@ -19,6 +19,7 @@ import React from "react";
 import { Route, Switch, Redirect, useLocation } from "react-router-dom";
 // javascript plugin used to create scrollbars on windows
 import PerfectScrollbar from "perfect-scrollbar";
+import firebase from "firebase";
 
 // core components
 import AdminNavbar from "components/Navbars/AdminNavbar.js";
@@ -28,7 +29,12 @@ import FixedPlugin from "components/FixedPlugin/FixedPlugin.js";
 import routes from "routes.js";
 
 import logo from "assets/img/react-logo.png";
+import {UserContext} from "../../contexts/UserContext";
+import Loader from "react-loaders";
+import RegisterNavbar from "../../components/Navbars/RegisterNavbar";
+import {ThemeContext} from "../../contexts/ThemeContext";
 
+let loader = <Loader type="ball-pulse-sync" style={{textAlign: "center", alignSelf: "center"}}/>
 var ps;
 
 function Admin(props) {
@@ -37,6 +43,8 @@ function Admin(props) {
   const [sidebarOpened, setsidebarOpened] = React.useState(
     document.documentElement.className.indexOf("nav-open") !== -1
   );
+  const [loading, setLoading] = React.useState(true);
+
   React.useEffect(() => {
     if (navigator.platform.indexOf("Win") > -1) {
       document.documentElement.className += " perfect-scrollbar-on";
@@ -99,30 +107,109 @@ function Admin(props) {
     }
     return "ECE 4900 Capstone";
   };
+  const getUserInfo = async (email, updateFunc) => {
+    await firebase.firestore().collection('users').doc(email).get().then((doc) => {
+      console.log(doc.data());
+      updateFunc({
+        theme: doc.data().theme,
+        companyName: doc.data().companyName,
+        contactEmail: email,
+        linkedDevice: doc.data().linkedDevice,
+      }, false);
+    }).finally(() => {
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
+    }).catch((e) => console.log(e));
+  }
+
   return (
       <React.Fragment>
-        <div className="wrapper">
-          <Sidebar
-            routes={routes}
-            logo={{
-              text: "My Company",
-              imgSrc: logo,
-            }}
-            toggleSidebar={toggleSidebar}
-          />
-          <div className="main-panel" ref={mainPanelRef} data={"blue"}>
-            <AdminNavbar
-              brandText={getBrandText(location.pathname)}
-              toggleSidebar={toggleSidebar}
-              sidebarOpened={sidebarOpened}
-            />
-            <Switch>
-              {getRoutes(routes)}
-              <Redirect from="*" to="/dashboard" />
-            </Switch>
-          </div>
-        </div>
-        <FixedPlugin bgColor={"blue"} />
+        <ThemeContext.Consumer>
+          {({changeTheme}) => (
+              <UserContext.Consumer>
+                {({user, updateUser}) => {
+                  if (user && user.companyName === "") {
+                    getUserInfo(user.contactEmail, updateUser);
+                    return(
+                        <React.Fragment>
+                          <div className="wrapper">
+                            <div className="main-panel" ref={mainPanelRef} data={"blue"}>
+                              <RegisterNavbar />
+                              <>
+                                <div className="login-content" style={{display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center"}}>
+                                  {loader}
+                                </div>
+                              </>
+                            </div>
+                          </div>
+                        </React.Fragment>
+                    );
+                  }
+
+                  if (loading) {
+                    if (user) {
+                      changeTheme(user.theme);
+                      setTimeout(() => {
+                        setLoading(false);
+                      }, 1000);
+                    }
+
+                    return(
+                        <React.Fragment>
+                          <div className="wrapper">
+                            <div className="main-panel" ref={mainPanelRef} data={"blue"}>
+                              <RegisterNavbar />
+                              <>
+                                <div className="login-content" style={{display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center"}}>
+                                  {loader}
+                                </div>
+                              </>
+                            </div>
+                          </div>
+                        </React.Fragment>
+                    );
+                  }
+
+                  return (
+                      <>
+                        <div className="wrapper">
+                          <Sidebar
+                              routes={routes}
+                              logo={{
+                                text: user.companyName,
+                                imgSrc: logo,
+                              }}
+                              toggleSidebar={toggleSidebar}
+                          />
+                          <div className="main-panel" ref={mainPanelRef} data={"blue"}>
+                            {user.linkedDevice ?
+                                (<AdminNavbar
+                                    brandText={getBrandText(location.pathname)}
+                                    toggleSidebar={toggleSidebar}
+                                    sidebarOpened={sidebarOpened}
+                                />)
+                                :
+                                (<RegisterNavbar />)
+                            }
+                            <Switch>
+                              {getRoutes(routes)}
+                              <Redirect from="*" to={user.linkedDevice ? "/dashboard" : "/register-device"} />
+                            </Switch>
+                          </div>
+                        </div>
+                        <FixedPlugin bgColor={"blue"} />
+                      </>
+                  );
+                }}
+              </UserContext.Consumer>
+            )
+          }
+        </ThemeContext.Consumer>
       </React.Fragment>
   );
 }

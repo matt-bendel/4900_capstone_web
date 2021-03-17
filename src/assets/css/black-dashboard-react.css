@@ -148,11 +148,11 @@ sup {
   top: -.5em; }
 
 a {
-  color: #e14eca;
+  color: #1d8cf8;
   text-decoration: none;
   background-color: transparent; }
   a:hover {
-    color: #c221a9;
+    color: #00f2c3;
     text-decoration: none; }
 
 a:not([href]):not([class]) {

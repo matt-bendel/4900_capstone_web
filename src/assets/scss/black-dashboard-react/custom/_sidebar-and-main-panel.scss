@@ -463,6 +463,11 @@
     min-height: calc(100vh - 70px);
   }
 
+  > .login-content {
+    //padding: 78px 150px 30px 150px;
+    min-height: calc(100vh - 70px);
+  }
+
   > .navbar {
     margin-bottom: 0;
   }
@@ -581,6 +586,11 @@
       > .content{
         padding-left: 130px;
       }
+
+      > .login-content{
+        //padding-left: 200px;
+        //padding-right: 200px;
+      }
     }
 
     footer{
@@ -662,6 +672,11 @@
     width: 100%;
     .content {
       padding-left: 30px;
+    }
+    .login-content {
+      //padding-left: 75px;
+      //padding-right: 75px;
+      max-width: 1000px;
     }
   }
 

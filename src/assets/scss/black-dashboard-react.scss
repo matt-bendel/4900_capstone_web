@@ -103,3 +103,20 @@
 
 // React differences
 @import "black-dashboard-react/react-differences/react-differences";
+$primary-color: #1d8cf8;
+@import '~loaders.css/src/animations/ball-pulse-sync.scss';
+
+.loader-hidden {
+ display: none;
+}
+.loader-active {
+ display: block;
+}
+
+a {
+ color: #1d8cf8;
+ text-decoration: none;
+ background-color: transparent; }
+a:hover {
+ color: #00f2c3;
+ text-decoration: none; }

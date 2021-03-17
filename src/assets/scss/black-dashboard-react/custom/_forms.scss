@@ -9,7 +9,7 @@
 
 
   &:focus{
-    border-color: $primary;
+    border-color: $info;
     background-color: $input-bg;
     @include box-shadow(none);
 
@@ -17,7 +17,7 @@
     & ~ .input-group-append .input-group-text,
     & + .input-group-prepend .input-group-text,
     & ~ .input-group-prepend .input-group-text{
-        border: 1px solid $primary;
+        border: 1px solid $info;
         border-left: none;
         background-color: $transparent-bg;
     }
