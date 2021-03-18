@@ -33,6 +33,7 @@ import {UserContext} from "../../contexts/UserContext";
 import Loader from "react-loaders";
 import RegisterNavbar from "../../components/Navbars/RegisterNavbar";
 import {ThemeContext} from "../../contexts/ThemeContext";
+import UserContextWrapper from "../../components/UserWrapper/UserWrapper";
 
 let loader = <Loader type="ball-pulse-sync" style={{textAlign: "center", alignSelf: "center"}}/>
 var ps;
@@ -84,19 +85,15 @@ function Admin(props) {
     document.documentElement.classList.toggle("nav-open");
     setsidebarOpened(!sidebarOpened);
   };
-  const getRoutes = (routes) => {
+  const getRoutes = (routes, user) => {
     return routes.map((prop, key) => {
-      if (prop.layout === "/admin") {
-        return (
-          <Route
-            path={prop.path}
-            component={prop.component}
-            key={key}
-          />
-        );
-      } else {
-        return null;
-      }
+      return (
+        <Route
+          path={prop.path}
+          component={prop.component}
+          key={key}
+        />
+      );
     });
   };
   const getBrandText = (path) => {
@@ -188,15 +185,22 @@ function Admin(props) {
                               toggleSidebar={toggleSidebar}
                           />
                           <div className="main-panel" ref={mainPanelRef} data={"blue"}>
-                            <AdminNavbar
-                                    brandText={getBrandText(location.pathname)}
-                                    toggleSidebar={toggleSidebar}
-                                    sidebarOpened={sidebarOpened}
-                                />
-                            <Switch>
-                              {getRoutes(routes)}
-                              <Redirect from="*" to={user.linkedDevice ? "/dashboard" : "/register-device"} />
-                            </Switch>
+                            <UserContext.Consumer>
+                              {({user}) =>
+                                  <>
+                                  <AdminNavbar
+                                      brandText={getBrandText(location.pathname)}
+                                      toggleSidebar={toggleSidebar}
+                                      sidebarOpened={sidebarOpened}
+                                      showNotification={user.linkedDevice}
+                                  />
+                                  <Switch>
+                                    {getRoutes(routes, user)}
+                                    <Redirect from="*" to={user.linkedDevice ? "/dashboard" : "/register-device"} />
+                                  </Switch>
+                                  </>
+                              }
+                            </UserContext.Consumer>
                           </div>
                         </div>
                         <FixedPlugin bgColor={"blue"} />

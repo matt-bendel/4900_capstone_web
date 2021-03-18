@@ -18,19 +18,19 @@
 import Dashboard from "views/Dashboard.js";
 import Notifications from "views/Notifications.js";
 import UserProfile from "views/UserProfile.js";
+import LinkDevice from "./views/LinkDevice";
 
 var routes = [
   {
     path: "/register-device",
     name: "Register Device",
     icon: "tim-icons icon-mobile",
-    component: null,
+    component: LinkDevice,
     layout: "/registration",
   },
   {
     path: "/dashboard",
     name: "Dashboard",
-    rtlName: "لوحة القيادة",
     icon: "tim-icons icon-chart-pie-36",
     component: Dashboard,
     layout: "/admin",
@@ -38,7 +38,6 @@ var routes = [
   {
     path: "/user-profile",
     name: "User Profile",
-    rtlName: "ملف تعريفي للمستخدم",
     icon: "tim-icons icon-single-02",
     component: UserProfile,
     layout: "/admin",
@@ -46,7 +45,6 @@ var routes = [
   {
     path: "/notifications",
     name: "Notifications",
-    rtlName: "إخطارات",
     icon: "tim-icons icon-bell-55",
     component: Notifications,
     layout: "/admin",

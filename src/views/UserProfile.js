@@ -1,172 +1,149 @@
-/*!
-
-=========================================================
-* Black Dashboard React v1.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/black-dashboard-react
-* Copyright 2020 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/black-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React from "react";
-
-// reactstrap components
-import {
-  Button,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  CardText,
-  FormGroup,
-  Form,
-  Input,
-  Row,
-  Col, Badge,
-} from "reactstrap";
-import {ThemeContext, themes} from "../contexts/ThemeContext";
+import {Link} from "react-router-dom";
+import {Button, Card, CardBody, CardFooter, Col, Form, FormGroup, Input, Row, Label, FormFeedback} from "reactstrap";
+import Loader from 'react-loaders'
+import firebase from "firebase";
+import NotificationAlert from "react-notification-alert";
 import {UserContext} from "../contexts/UserContext";
 
-function UserProfile() {
+let loader = <Loader type="ball-pulse-sync" style={{textAlign: "center", alignSelf: "center"}}/>
+let initialLoad = true;
+
+function CreateAccount(props) {
+  const [email, setEmail] = React.useState(null);
+  const [companyName, setCompanyName] = React.useState("");
+  const [pass, setPass] = React.useState("");
+  const [confirmPass, setConfirmPass] = React.useState("");
+  const [loading, setLoading] = React.useState(true);
+  const notificationAlertRef = React.useRef(null);
+  const [isValidEmail, setIsEmail] = React.useState(true);
+  const [isValidPass, setIsPass] = React.useState(true);
+  const [isValidPassConfirm, setIsPassConfirm] = React.useState(true);
+  const [isValidCompany, setIsCompany] = React.useState(true);
+
+
+  React.useEffect(() => {
+    if (pass !== "" && confirmPass !== "" && confirmPass !== pass && isValidPassConfirm) {
+      setIsPassConfirm(false);
+    } else if (pass !== "" && confirmPass !== "" && confirmPass === pass || confirmPass === ""){
+      setIsPassConfirm(true);
+    }
+
+    if (!isValidEmail && email !== "" && email) {
+      setIsEmail(true);
+    }
+
+    if (!isValidPass && pass !== "") {
+      setIsPass(true);
+    }
+
+    if (!isValidCompany && companyName !== "") {
+      setIsCompany(true);
+    }
+  });
+
+  const notify = (text) => {
+    var type = "danger";
+    var options = {};
+    options = {
+      place: "tc",
+      message: (
+          <div>
+            <div>
+              {text}
+            </div>
+          </div>
+      ),
+      type: type,
+      icon: "tim-icons icon-bell-55",
+      autoDismiss: 7,
+    };
+    notificationAlertRef.current.notificationAlert(options);
+  }
+
+  const update = (event, userToUpdate, updateUserContext) => {
+    setLoading(true);
+    event.preventDefault();
+
+    if (companyName === ""){
+      setIsCompany(false);
+
+      setTimeout(() => {
+        setLoading(false);
+        notify("Please do not leave any fields blank.");
+      }, 1000)
+
+      return;
+    } else {
+      setIsCompany(true);
+    }
+
+    updateUserContext({
+      theme: userToUpdate.theme,
+      companyName: companyName,
+      contactEmail: userToUpdate.contactEmail,
+      linkedDevice: userToUpdate.linkedDevice,
+      deviceId: userToUpdate.deviceId,
+    }, true);
+  };
+
+  if (loading) {
+    if (initialLoad) {
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+    }
+
+    return (
+        <>
+          <div className="login-content" style={{display: "flex",
+            justifyContent: "center",
+            alignItems: "center"}}>
+            {loader}
+          </div>
+        </>
+    );
+  }
+
   return (
-    <>
-      <div className="content">
-        <Row>
-          <Col md="12">
+      <>
+        <div className="login-content" style={{display: "flex",
+          justifyContent: "center",
+          alignItems: "center"}}>
+          <div className="react-notification-alert-container">
+            <NotificationAlert ref={notificationAlertRef} />
+          </div>
+          <Col sm="6" md={{ size: 4 }}>
+            <h1>Update your information below</h1>
             <Card>
-              <CardHeader>
-                <h5 className="title">Edit Profile</h5>
-              </CardHeader>
-              <CardBody>
-                <Form>
-                  <Row>
-                    <Col className="pr-md-1" md="5">
-                      <FormGroup>
-                        <label>Company (disabled)</label>
-                        <Input
-                          defaultValue="Creative Code Inc."
-                          disabled
-                          placeholder="Company"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="px-md-1" md="3">
-                      <FormGroup>
-                        <label>Username</label>
-                        <Input
-                          defaultValue="michael23"
-                          placeholder="Username"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="pl-md-1" md="4">
-                      <FormGroup>
-                        <label htmlFor="exampleInputEmail1">
-                          Email address
-                        </label>
-                        <Input placeholder="mike@email.com" type="email" />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col className="pr-md-1" md="6">
-                      <FormGroup>
-                        <label>First Name</label>
-                        <Input
-                          defaultValue="Mike"
-                          placeholder="Company"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="pl-md-1" md="6">
-                      <FormGroup>
-                        <label>Last Name</label>
-                        <Input
-                          defaultValue="Andrew"
-                          placeholder="Last Name"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md="12">
-                      <FormGroup>
-                        <label>Address</label>
-                        <Input
-                          defaultValue="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
-                          placeholder="Home Address"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col className="pr-md-1" md="4">
-                      <FormGroup>
-                        <label>City</label>
-                        <Input
-                          defaultValue="Mike"
-                          placeholder="City"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="px-md-1" md="4">
-                      <FormGroup>
-                        <label>Country</label>
-                        <Input
-                          defaultValue="Andrew"
-                          placeholder="Country"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="pl-md-1" md="4">
-                      <FormGroup>
-                        <label>Postal Code</label>
-                        <Input placeholder="ZIP Code" type="number" />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md="8">
-                      <FormGroup>
-                        <label>About Me</label>
-                        <Input
-                          cols="80"
-                          defaultValue="Lamborghini Mercy, Your chick she so thirsty, I'm in
-                            that two seat Lambo."
-                          placeholder="Here can be your description"
-                          rows="4"
-                          type="textarea"
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                </Form>
-              </CardBody>
-              <CardFooter>
-                <Button className="btn-fill" color="primary" type="submit">
-                  Save
-                </Button>
-              </CardFooter>
+              <UserContext.Consumer>
+                {({ user, updateUser }) => (
+                    <Form onSubmit={(e) => update(e, user, updateUser)}>
+                      <CardBody>
+                        <Row>
+                          <Col className="pl-md-1" md="12">
+                            <FormGroup>
+                              <Label for="name">Company or Organization Name</Label>
+                              <Input invalid={!isValidCompany} id="name" placeholder="New company name here" value={companyName !== "" ? companyName : user.companyName} onChange={(val) => {
+                                setCompanyName(val.target.value);
+                              }}/>
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                      </CardBody>
+                      <CardFooter className="text-center">
+                        <Button className="btn-fill" color="info" type="submit" id="submit">
+                          Update Information
+                        </Button>
+                      </CardFooter>
+                    </Form>
+                )}
+              </UserContext.Consumer>
             </Card>
           </Col>
-        </Row>
-      </div>
-    </>
+        </div>
+      </>
   );
 }
 
-export default UserProfile;
+export default CreateAccount;

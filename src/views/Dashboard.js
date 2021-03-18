@@ -20,7 +20,7 @@ import React from "react";
 import classNames from "classnames";
 // react plugin used to create charts
 import { Line, Bar } from "react-chartjs-2";
-
+import firebase from "firebase";
 // reactstrap components
 import {
   Button,
@@ -49,15 +49,83 @@ import {
   chartExample3,
   chartExample4,
 } from "variables/charts.js";
+import Loader from "react-loaders";
+import {UserContext} from "../contexts/UserContext";
+import NotificationAlert from "react-notification-alert";
+
+let loader = <Loader type="ball-pulse-sync" style={{textAlign: "center", alignSelf: "center"}}/>
+let initialLoad = true;
 
 function Dashboard(props) {
   const [bigChartData, setbigChartData] = React.useState("data1");
-  const setBgChartData = (name) => {
-    setbigChartData(name);
-  };
+  const [batteryPercent, setBatteryPercent] = React.useState("");
+  const [liquidPercent, setLiquidPercent] = React.useState("");
+  const [loading, setLoading] = React.useState(true);
+  const notificationAlertRef = React.useRef(null);
+  let user = React.useContext(UserContext).user;
+
+  React.useEffect(() => {
+    let deviceRef = firebase.firestore().collection('devices').doc(user.deviceId);
+    const listener = deviceRef.onSnapshot((doc) => {
+      if (batteryPercent !== doc.data().percentBattery && batteryPercent !== "") {
+        notify("The battery percentage of your device is now " + doc.data().percentBattery + ".");
+        console.log('TEST');
+      }
+
+      if (liquidPercent !== doc.data().percentLiquid && liquidPercent !== "") {
+        notify("The percentage of disinfectant left in your device is " + doc.data().percentLiquid + ".");
+      }
+
+      setLiquidPercent(doc.data().percentLiquid);
+      setBatteryPercent(doc.data().percentBattery);
+    });
+
+    return () => listener();
+  }, []);
+
+  const notify = (text) => {
+    var type = "danger";
+    var options = {};
+    options = {
+      place: "tc",
+      message: (
+          <div>
+            <div>
+              {text}
+            </div>
+          </div>
+      ),
+      type: type,
+      icon: "tim-icons icon-bell-55",
+      autoDismiss: 7,
+    };
+    notificationAlertRef.current.notificationAlert(options);
+  }
+
+  if (loading) {
+    if (initialLoad && batteryPercent !== "") {
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+    }
+
+    return (
+        <>
+          <div className="login-content" style={{display: "flex",
+            justifyContent: "center",
+            alignItems: "center"}}>
+            {loader}
+          </div>
+        </>
+    );
+  }
+
   return (
     <>
       <div className="content">
+        <div className="react-notification-alert-container">
+          <NotificationAlert ref={notificationAlertRef} />
+        </div>
         <h1>Your device last cleaned the door handle at TEMP.</h1>
         <Row>
           <Col lg="6">
@@ -68,6 +136,7 @@ function Dashboard(props) {
                 </CardTitle>
               </CardHeader>
               <CardBody>
+                <p>{batteryPercent}</p>
               </CardBody>
             </Card>
           </Col>
@@ -80,6 +149,7 @@ function Dashboard(props) {
                 </CardTitle>
               </CardHeader>
               <CardBody>
+                <p>{liquidPercent}</p>
               </CardBody>
             </Card>
           </Col>

@@ -75,7 +75,7 @@ function AdminNavbar(props) {
     <>
       <Navbar className={classNames("navbar-absolute", color)} expand="lg">
         <Container fluid>
-          <div className="navbar-wrapper">
+          <div className="navbar-wrapper" style={{marginTop: "10px"}}>
             <div
               className={classNames("navbar-toggle d-inline", {
                 toggled: props.sidebarOpened,
@@ -91,55 +91,6 @@ function AdminNavbar(props) {
               {props.brandText}
             </NavbarBrand>
           </div>
-          <NavbarToggler onClick={toggleCollapse}>
-            <span className="navbar-toggler-bar navbar-kebab" />
-            <span className="navbar-toggler-bar navbar-kebab" />
-            <span className="navbar-toggler-bar navbar-kebab" />
-          </NavbarToggler>
-          <Collapse navbar isOpen={collapseOpen}>
-            <Nav className="ml-auto" navbar>
-              <UncontrolledDropdown nav>
-                <DropdownToggle
-                  caret
-                  color="default"
-                  data-toggle="dropdown"
-                  nav
-                >
-                  <div className="notification d-none d-lg-block d-xl-block" />
-                  <i className="tim-icons icon-bell-55" />
-                  <p className="d-lg-none">Notifications</p>
-                </DropdownToggle>
-                <DropdownMenu className="dropdown-navbar" right tag="ul">
-                  <NavLink tag="li">
-                    <DropdownItem className="nav-item">
-                      Mike John responded to your email
-                    </DropdownItem>
-                  </NavLink>
-                  <NavLink tag="li">
-                    <DropdownItem className="nav-item">
-                      You have 5 more tasks
-                    </DropdownItem>
-                  </NavLink>
-                  <NavLink tag="li">
-                    <DropdownItem className="nav-item">
-                      Your friend Michael is in town
-                    </DropdownItem>
-                  </NavLink>
-                  <NavLink tag="li">
-                    <DropdownItem className="nav-item">
-                      Another notification
-                    </DropdownItem>
-                  </NavLink>
-                  <NavLink tag="li">
-                    <DropdownItem className="nav-item">
-                      Another one
-                    </DropdownItem>
-                  </NavLink>
-                </DropdownMenu>
-              </UncontrolledDropdown>
-              <li className="separator d-lg-none" />
-            </Nav>
-          </Collapse>
         </Container>
       </Navbar>
     </>
