@@ -27,6 +27,7 @@ import PerfectScrollbar from "perfect-scrollbar";
 // reactstrap components
 import { Nav, NavLink as ReactstrapNavLink } from "reactstrap";
 import {UserContext} from "../../contexts/UserContext";
+import firebase from "firebase";
 
 var ps;
 
@@ -165,6 +166,13 @@ function Sidebar(props) {
           </Nav>
           <div className="logo">
           </div>
+          <Link
+              onClick={() => firebase.auth().signOut()}
+              className="nav-link"
+              style={{textAlign: "Center", color: "white"}}
+          >
+            Logout
+          </Link>
         </div>
       </div>
   );

@@ -115,6 +115,7 @@ function Admin(props) {
         companyName: doc.data().companyName,
         contactEmail: email,
         linkedDevice: doc.data().linkedDevice,
+        deviceId: doc.data().deviceId,
       }, false);
     }).finally(() => {
       setTimeout(() => {

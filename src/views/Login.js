@@ -15,7 +15,7 @@ function Login(props) {
     const [loading, setLoading] = React.useState(true);
     const notificationAlertRef = React.useRef(null);
 
-    const notify = () => {
+    const notify = (text) => {
         var type = "danger";
         var options = {};
         options = {
@@ -23,7 +23,7 @@ function Login(props) {
             message: (
                 <div>
                     <div>
-                        Your account does not exist. Please create one.
+                        {text}
                     </div>
                 </div>
             ),
@@ -37,17 +37,25 @@ function Login(props) {
     const authenticate = (event, updateUserContext) => {
         setLoading(true);
         event.preventDefault();
+
+        if (!email || email === "" || pass === "") {
+            setTimeout(() => {
+                setLoading(false);
+                notify("Please do not leave any fields blank.");
+            }, 1000);
+        }
         firebase.auth().signInWithEmailAndPassword(email, pass).then((user) => {
             updateUserContext({
                 theme: "",
                 companyName: "",
                 contactEmail: email,
                 linkedDevice: false,
+                deviceId: "",
             }, false);
         }).catch((e) => {
             setTimeout(() => {
                 setLoading(false);
-                notify();
+                notify("Your account does not exist. Please create one.");
             }, 1000)
         })
     };
@@ -118,7 +126,7 @@ function Login(props) {
                 </Card>
                     <h4>
                         Don't have an account?{" "}
-                        <Link to="/create-account">Click here.</Link>
+                        <Link to="/create-account">Create one.</Link>
                     </h4>
                 </Col>
             </div>

@@ -1,4 +1,5 @@
 import Login from "../../views/Login";
+import CreateAccount from "../../views/CreateAccount";
 
 
 var register_routes = [
@@ -11,7 +12,7 @@ var register_routes = [
     {
         path: "/create-account",
         name: "Sign Up",
-        component: null,
+        component: CreateAccount,
         layout: "/registration",
     },
 ];

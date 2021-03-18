@@ -29,8 +29,10 @@ import {
   Form,
   Input,
   Row,
-  Col,
+  Col, Badge,
 } from "reactstrap";
+import {ThemeContext, themes} from "../contexts/ThemeContext";
+import {UserContext} from "../contexts/UserContext";
 
 function UserProfile() {
   return (

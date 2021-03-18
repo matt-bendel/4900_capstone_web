@@ -7,6 +7,7 @@ export const UserContext = createContext({
         companyName: "",
         contactEmail: "",
         linkedDevice: false,
+        deviceId: "",
     },
     updateUser: () => {},
 });

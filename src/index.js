@@ -58,6 +58,7 @@ ReactDOM.render(
                                                 companyName: "",
                                                 contactEmail: user.email,
                                                 linkedDevice: false,
+                                                deviceId: "",
                                             }, false);
                                         }
                                         return <Route path="/" render={(props) => <AdminLayout {...props} />} />;
