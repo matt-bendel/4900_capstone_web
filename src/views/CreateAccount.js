@@ -113,6 +113,7 @@ function CreateAccount(props) {
 
     if (loading) {
         if (initialLoad) {
+            initialLoad = false;
             setTimeout(() => {
                 setLoading(false);
             }, 500);
