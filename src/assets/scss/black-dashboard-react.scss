@@ -120,3 +120,29 @@ a {
 a:hover {
  color: #00f2c3;
  text-decoration: none; }
+
+.custom-control-input {
+ position: absolute;
+ left: 0;
+ z-index: -1;
+ width: 1.25rem;
+ height: 1.28125rem;
+ opacity: 0; }
+.custom-control-input:checked ~ .custom-control-label::before {
+ color: #ffffff;
+ border-color: #00f2c3;
+ background-color: #1d8cf8;
+ box-shadow: none; }
+.custom-control-input:focus ~ .custom-control-label::before {
+ box-shadow: none, none; }
+.custom-control-input:focus:not(:checked) ~ .custom-control-label::before {
+ border-color: rgba(50, 151, 211, 0.25); }
+.custom-control-input:not(:disabled):active ~ .custom-control-label::before {
+ color: #ffffff;
+ background-color: #00f2c3;
+ border-color: #1d8cf8;
+ box-shadow: none; }
+.custom-control-input[disabled] ~ .custom-control-label, .custom-control-input:disabled ~ .custom-control-label {
+ color: #6c757d; }
+.custom-control-input[disabled] ~ .custom-control-label::before, .custom-control-input:disabled ~ .custom-control-label::before {
+ background-color: #e9ecef; }

@@ -41,7 +41,7 @@ function LinkDevice(props) {
         notificationAlertRef.current.notificationAlert(options);
     }
 
-    const link = (event, updateUserContext, userToUpdate) => {
+    const link = async (event, updateUserContext, userToUpdate) => {
         setLoading(true);
         event.preventDefault();
 
@@ -53,7 +53,7 @@ function LinkDevice(props) {
         }
 
         let ref = firebase.firestore().collection('devices').doc(code);
-        ref.get().then((data) => {
+        await ref.get().then((data) => {
             if (!data.data()) {
                 setTimeout(() => {
                     setLoading(false);
@@ -74,6 +74,13 @@ function LinkDevice(props) {
                 linkedDevice: true,
                 deviceId: code,
             }, true);
+
+            firebase.firestore().collection('notifications').doc(code).set({
+               lowBattery: false,
+               lowLiquid: false,
+               refilled: false,
+               recharged: false,
+            });
 
             props.history.push('/dashboard');
         }).catch((e) => {

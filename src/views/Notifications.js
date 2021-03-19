@@ -1,239 +1,135 @@
-/*!
-
-=========================================================
-* Black Dashboard React v1.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/black-dashboard-react
-* Copyright 2020 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/black-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React from "react";
-// react plugin for creating notifications over the dashboard
-import NotificationAlert from "react-notification-alert";
+import {Link} from "react-router-dom";
+import {Button, Card, CardBody, CardFooter, Col, Form, FormGroup, CustomInput, Row, Label, } from "reactstrap";
+import Loader from 'react-loaders'
+import firebase from "firebase";
+import {UserContext} from "../contexts/UserContext";
 
-// reactstrap components
-import {
-  Alert,
-  UncontrolledAlert,
-  Button,
-  Card,
-  CardHeader,
-  CardBody,
-  CardTitle,
-  Row,
-  Col,
-} from "reactstrap";
+let loader = <Loader type="ball-pulse-sync" style={{textAlign: "center", alignSelf: "center"}}/>
+let initialLoad = true;
 
-function Notifications() {
-  const notificationAlertRef = React.useRef(null);
-  const notify = (place) => {
-    var color = Math.floor(Math.random() * 5 + 1);
-    var type;
-    switch (color) {
-      case 1:
-        type = "primary";
-        break;
-      case 2:
-        type = "success";
-        break;
-      case 3:
-        type = "danger";
-        break;
-      case 4:
-        type = "warning";
-        break;
-      case 5:
-        type = "info";
-        break;
-      default:
-        break;
+function Notifications(props) {
+  const [notification, setNotification] = React.useState({
+    lowBattery: false,
+    lowLiquid: false,
+    recharge: false,
+    refill: false,
+    init: true
+  });
+  const [loading, setLoading] = React.useState(true);
+
+  let user = React.useContext(UserContext).user;
+
+  React.useEffect(() => {
+    if (notification.init) {
+      firebase.firestore().collection('notifications').doc(user.deviceId).get().then(
+          (data) => {
+            setNotification({
+              lowBattery: data.data().lowBattery,
+              lowLiquid: data.data().lowLiquid,
+              recharge: data.data().recharged,
+              refill: data.data().refilled,
+              init: false,
+            });
+          }
+      ).catch((e) => {
+        console.log(e);
+        setNotification({
+          lowBattery: false,
+          lowLiquid: false,
+          recharge: false,
+          refill: false,
+          init: false,
+        });
+      });
     }
-    var options = {};
-    options = {
-      place: place,
-      message: (
-        <div>
-          <div>
-            Welcome to <b>Black Dashboard React</b> - a beautiful freebie for
-            every web developer.
-          </div>
-        </div>
-      ),
-      type: type,
-      icon: "tim-icons icon-bell-55",
-      autoDismiss: 7,
-    };
-    notificationAlertRef.current.notificationAlert(options);
+  });
+
+  const update = (event, userNotif) => {
+    setLoading(true);
+    event.preventDefault();
+
+    firebase.firestore().collection('notifications').doc(user.deviceId).update({
+      lowBattery: notification.lowBattery,
+      lowLiquid: notification.lowLiquid,
+      refilled: notification.refill,
+      recharged: notification.recharge,
+    });
   };
+
+  if (loading) {
+    if (initialLoad) {
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+    }
+
+    return (
+        <>
+          <div className="login-content" style={{display: "flex",
+            justifyContent: "center",
+            alignItems: "center"}}>
+            {loader}
+          </div>
+        </>
+    );
+  }
+
   return (
-    <>
-      <div className="content">
-        <div className="react-notification-alert-container">
-          <NotificationAlert ref={notificationAlertRef} />
+      <>
+        <div className="login-content" style={{display: "flex",
+          justifyContent: "center",
+          alignItems: "center"}}>
+          <Col sm="6" md={{ size: 4 }}>
+            <h1>Select which notifications you want to receive</h1>
+            <h6>NOTE: Notifications are deliviered to the email associated with your account.</h6>
+            <Card>
+              <UserContext.Consumer>
+                {({ user }) => (
+                    <Form onSubmit={(e) => update(e, user)}>
+                      <CardBody>
+                        <Row>
+                          <Col className="pl-md-1" md="12">
+                            <FormGroup>
+                              <h4 for="exampleCheckbox">Notification Options</h4>
+                                <CustomInput type="switch" defaultChecked={notification.lowBattery} onChange={() => {
+                                  let newNoti = notification;
+                                  newNoti.lowBattery = !notification.lowBattery;
+                                  setNotification(newNoti);
+                                }} id="switch-1" label="Receive a notification when the amount of battery remaining is less than 5%." />
+                                <br />
+                                <CustomInput type="switch" defaultChecked={notification.lowLiquid} onChange={() => {
+                                  let newNoti = notification;
+                                  newNoti.lowLiquid = !notification.lowLiquid;
+                                  setNotification(newNoti);
+                                }} id="switch-2" label="Receive a notification when the amount of disinfectant remaining is less than 5%." />
+                                <br />
+                                <CustomInput type="switch" defaultChecked={notification.recharge} onChange={() => {
+                                  let newNoti = notification;
+                                  newNoti.recharge = !notification.recharge;
+                                  setNotification(newNoti);
+                                }} id="switch-3" label="Receive a notification when the battery is recharged." />
+                                <br />
+                                <CustomInput type="switch" defaultChecked={notification.refill} onChange={() => {
+                                  let newNoti = notification;
+                                  newNoti.refill = !notification.refill;
+                                  setNotification(newNoti);
+                                }} id="switch-4" label="Receive a notification when the disinfectant is refilled." />
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                      </CardBody>
+                      <CardFooter className="text-center">
+                        <Button className="btn-fill" color="info" type="submit" id="submit">
+                          Update
+                        </Button>
+                      </CardFooter>
+                    </Form>)}
+              </UserContext.Consumer>
+            </Card>
+          </Col>
         </div>
-        <Row>
-          <Col md="6">
-            <Card>
-              <CardHeader>
-                <CardTitle tag="h4">Notifications Style</CardTitle>
-              </CardHeader>
-              <CardBody>
-                <Alert color="info">
-                  <span>This is a plain notification</span>
-                </Alert>
-                <UncontrolledAlert color="info">
-                  <span>This is a notification with close button.</span>
-                </UncontrolledAlert>
-                <UncontrolledAlert className="alert-with-icon" color="info">
-                  <span className="tim-icons icon-bell-55" data-notify="icon" />
-                  <span data-notify="message">
-                    This is a notification with close button and icon.
-                  </span>
-                </UncontrolledAlert>
-                <UncontrolledAlert className="alert-with-icon" color="info">
-                  <span className="tim-icons icon-bell-55" data-notify="icon" />
-                  <span data-notify="message">
-                    This is a notification with close button and icon and have
-                    many lines. You can see that the icon and the close button
-                    are always vertically aligned. This is a beautiful
-                    notification. So you don't have to worry about the style.
-                  </span>
-                </UncontrolledAlert>
-              </CardBody>
-            </Card>
-          </Col>
-          <Col md="6">
-            <Card>
-              <CardHeader>
-                <CardTitle tag="h4">Notification states</CardTitle>
-              </CardHeader>
-              <CardBody>
-                <UncontrolledAlert color="primary">
-                  <span>
-                    <b>Primary - </b>
-                    This is a regular notification made with ".alert-primary"
-                  </span>
-                </UncontrolledAlert>
-                <UncontrolledAlert color="info">
-                  <span>
-                    <b>Info - </b>
-                    This is a regular notification made with ".alert-info"
-                  </span>
-                </UncontrolledAlert>
-                <UncontrolledAlert color="success">
-                  <span>
-                    <b>Success - </b>
-                    This is a regular notification made with ".alert-success"
-                  </span>
-                </UncontrolledAlert>
-                <UncontrolledAlert color="warning">
-                  <span>
-                    <b>Warning - </b>
-                    This is a regular notification made with ".alert-warning"
-                  </span>
-                </UncontrolledAlert>
-                <UncontrolledAlert color="danger">
-                  <span>
-                    <b>Danger - </b>
-                    This is a regular notification made with ".alert-danger"
-                  </span>
-                </UncontrolledAlert>
-              </CardBody>
-            </Card>
-          </Col>
-          <Col md="12">
-            <Card>
-              <CardBody>
-                <div className="places-buttons">
-                  <Row>
-                    <Col className="ml-auto mr-auto text-center" md="6">
-                      <CardTitle tag="h4">
-                        Notifications Places
-                        <p className="category">Click to view notifications</p>
-                      </CardTitle>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col className="ml-auto mr-auto" lg="8">
-                      <Row>
-                        <Col md="4">
-                          <Button
-                            block
-                            color="primary"
-                            onClick={() => notify("tl")}
-                          >
-                            Top Left
-                          </Button>
-                        </Col>
-                        <Col md="4">
-                          <Button
-                            block
-                            color="primary"
-                            onClick={() => notify("tc")}
-                          >
-                            Top Center
-                          </Button>
-                        </Col>
-                        <Col md="4">
-                          <Button
-                            block
-                            color="primary"
-                            onClick={() => notify("tr")}
-                          >
-                            Top Right
-                          </Button>
-                        </Col>
-                      </Row>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col className="ml-auto mr-auto" lg="8">
-                      <Row>
-                        <Col md="4">
-                          <Button
-                            block
-                            color="primary"
-                            onClick={() => notify("bl")}
-                          >
-                            Bottom Left
-                          </Button>
-                        </Col>
-                        <Col md="4">
-                          <Button
-                            block
-                            color="primary"
-                            onClick={() => notify("bc")}
-                          >
-                            Bottom Center
-                          </Button>
-                        </Col>
-                        <Col md="4">
-                          <Button
-                            block
-                            color="primary"
-                            onClick={() => notify("br")}
-                          >
-                            Bottom Right
-                          </Button>
-                        </Col>
-                      </Row>
-                    </Col>
-                  </Row>
-                </div>
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
-      </div>
-    </>
+      </>
   );
 }
 
