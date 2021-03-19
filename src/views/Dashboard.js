@@ -45,13 +45,11 @@ import {
 // core components
 import {
   chartExample1,
-  chartExample2,
-  chartExample3,
-  chartExample4,
 } from "variables/charts.js";
 import Loader from "react-loaders";
 import {UserContext} from "../contexts/UserContext";
 import NotificationAlert from "react-notification-alert";
+import ProgressBar from 'react-percent-bar'
 
 let loader = <Loader type="ball-pulse-sync" style={{textAlign: "center", alignSelf: "center"}}/>
 let initialLoad = true;
@@ -136,7 +134,8 @@ function Dashboard(props) {
                 </CardTitle>
               </CardHeader>
               <CardBody>
-                <p>{batteryPercent}</p>
+                <h4>Your device is currently {batteryPercent} charged.</h4>
+                <ProgressBar width={'100%'} percent={batteryPercent.replace('%','')} colorShift={true} fillColor={'red'} />
               </CardBody>
             </Card>
           </Col>
@@ -149,7 +148,8 @@ function Dashboard(props) {
                 </CardTitle>
               </CardHeader>
               <CardBody>
-                <p>{liquidPercent}</p>
+                <h4>There is currently {liquidPercent} of disinfectant remaining.</h4>
+                <ProgressBar width={'100%'} percent={liquidPercent.replace('%','')} colorShift={true} fillColor={'red'} />
               </CardBody>
             </Card>
           </Col>
