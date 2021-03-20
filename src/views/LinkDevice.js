@@ -80,6 +80,7 @@ function LinkDevice(props) {
                lowLiquid: false,
                refilled: false,
                recharged: false,
+               email: userToUpdate.contactEmail,
             });
 
             props.history.push('/dashboard');

@@ -63,6 +63,7 @@ function Dashboard(props) {
   let user = React.useContext(UserContext).user;
 
   React.useEffect(() => {
+    firebase.firestore().collection('devices').doc('12345').update({battery: false}).catch((e) => console.log(e));
     let deviceRef = firebase.firestore().collection('devices').doc(user.deviceId);
     const listener = deviceRef.onSnapshot((doc) => {
       if (batteryPercent !== doc.data().percentBattery && batteryPercent !== "") {
